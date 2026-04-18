@@ -1,0 +1,34 @@
+{
+  "name": "smarttrade-bot",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "start:dev": "npm run idl && ts-node src/main.ts",
+    "idl": "node scripts/fetch-idl.js",
+    "test": "mocha -r ts-node/register ../tests/**/*.spec.ts",
+    "lint": "echo \"(eslint optional)\"",
+    "resolve:whirlpool": "ts-node src/scripts/resolve-whirlpool-pool.ts",
+    "validate:raydium": "ts-node src/scripts/validate-raydium-pool.ts",
+    "serve:pnl": "node -e \"require('http').createServer((req,res)=>{const fs=require('fs');const p='./data/pnl.log.jsonl';const d=fs.existsSync(p)?fs.readFileSync(p,'utf-8').split('\\n').filter(Boolean).map(JSON.parse):[];res.setHeader('Content-Type','application/json');res.end(JSON.stringify(d));}).listen(9400,()=>console.log('PnL feed on :9400'))\""
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.95.0",
+    "@coral-xyz/anchor": "^0.29.0",
+    "bn.js": "^5.2.1",
+    "prom-client": "^15.1.0",
+    "express": "^4.19.2",
+    "@orca-so/whirlpool-sdk": "^0.10.0",
+    "@project-serum/anchor": "^0.29.0",
+    "@raydium-io/raydium-sdk": "^1.3.0",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "mocha": "^10.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "@types/mocha": "^10.0.6",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.30"
+  }
+}

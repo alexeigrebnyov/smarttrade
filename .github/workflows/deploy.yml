@@ -1,0 +1,25 @@
+name: Deploy
+on:
+  push:
+    tags: ['v*']
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Rust, Solana & Anchor
+        run: |
+          rustup toolchain install stable
+          sh -c "$(curl -sSfL https://release.solana.com/v1.17.0/install)"
+          cargo install --locked anchor-cli --git https://github.com/coral-xyz/anchor
+      - name: Build contracts & run tests
+        run: |
+          cd contracts && anchor build
+          cd .. && cd bot && npm ci && npm run build && npm test
+  deploy-devnet:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to Devnet
+        run: bash deployments/deploy-contracts.sh

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "SOL/USDC",
+    "rayPool": "REPLACE_WITH_RAYDIUM_POOL_ID",
+    "dlmmPool": "REPLACE_WITH_WHIRLPOOL_POOL_ID",
+    "mints": {
+      "in": "So11111111111111111111111111111111111111112",
+      "out": "Es9vMFrzaC...USDT_OR_USDC...",
+      "decimalsIn": 9
+    }
+  },
+  {
+    "name": "USDC/USDT",
+    "rayPool": "REPLACE_WITH_RAYDIUM_POOL_ID",
+    "dlmmPool": "REPLACE_WITH_WHIRLPOOL_POOL_ID",
+    "mints": {
+      "in": "EPjFWdd5Au...USDC_MAINNET...",
+      "out": "Es9vMF...USDT_MAINNET...",
+      "decimalsIn": 6
+    }
+  }
+]

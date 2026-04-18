@@ -1,0 +1,22 @@
+[
+  {
+    "name": "SOL/USDC",
+    "rayPool": "6UeJxtgAzKAEz7QdWPRdULiA1ZxxD3L7A3Nz2hJGq3Ei",
+    "dlmmPool": "9QkcXoYxDp1UJfEts3PqQhsY4UvG6ffJ6bzgcvTz9TnZ",
+    "mints": {
+      "in": "So11111111111111111111111111111111111111112",
+      "out": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+      "decimalsIn": 9
+    }
+  },
+  {
+    "name": "USDC/USDT",
+    "rayPool": "5Nz4C76ZhtBhz7tqhU2GJCUeaybbHR3xCk5vX7jXgjUh",
+    "dlmmPool": "A2Hhdc6oT5Yp3iNjEGccD7mF4oPwKhtf9fTyxQqPxscx",
+    "mints": {
+      "in": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+      "out": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+      "decimalsIn": 6
+    }
+  }
+]
