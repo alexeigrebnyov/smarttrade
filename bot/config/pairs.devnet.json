@@ -1,0 +1,56 @@
+{
+  "programId": "REPLACE_WITH_DEPLOYED_PROGRAM_ID",
+  "description": "Arbitrage pairs for Raydium <-> Orca Whirlpool on Solana devnet",
+  "lastUpdated": "2024-01-15T00:00:00Z",
+  "pairs": [
+    {
+      "name": "SOL-USDC",
+      "rayPool": "REPLACE_WITH_RAYDIUM_SOL_USDC_POOL",
+      "dlmmPool": "REPLACE_WITH_ORCA_SOL_USDC_POOL",
+      "mints": {
+        "in": "So11111111111111111111111111111111111111112",
+        "out": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "decimalsIn": 9,
+        "decimalsOut": 6
+      },
+      "enabled": true,
+      "minLiquidityUsd": 10000,
+      "priority": 1
+    },
+    {
+      "name": "SOL-USDT",
+      "rayPool": "REPLACE_WITH_RAYDIUM_SOL_USDT_POOL",
+      "dlmmPool": "REPLACE_WITH_ORCA_SOL_USDT_POOL",
+      "mints": {
+        "in": "So11111111111111111111111111111111111111112",
+        "out": "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+        "decimalsIn": 9,
+        "decimalsOut": 6
+      },
+      "enabled": true,
+      "minLiquidityUsd": 10000,
+      "priority": 2
+    },
+    {
+      "name": "RAY-USDC",
+      "rayPool": "REPLACE_WITH_RAYDIUM_RAY_USDC_POOL",
+      "dlmmPool": "REPLACE_WITH_ORCA_RAY_USDC_POOL",
+      "mints": {
+        "in": "4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R",
+        "out": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "decimalsIn": 6,
+        "decimalsOut": 6
+      },
+      "enabled": false,
+      "minLiquidityUsd": 5000,
+      "priority": 3
+    }
+  ],
+  "notes": {
+    "howToFindPools": "Используйте скрипты в bot/src/scripts/ для поиска адресов пулов",
+    "raydiumExplorer": "https://raydium.io/pools/",
+    "orcaExplorer": "https://www.orca.so/pools",
+    "solscanRaydium": "https://solscan.io/account/675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",
+    "solscanOrca": "https://solscan.io/account/whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc"
+  }
+}

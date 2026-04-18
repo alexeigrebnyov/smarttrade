@@ -5,12 +5,17 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/main.js",
     "start:dev": "npm run idl && ts-node src/main.ts",
+    "start:prod": "NODE_ENV=production node dist/main.js",
     "idl": "node scripts/fetch-idl.js",
     "test": "mocha -r ts-node/register ../tests/**/*.spec.ts",
+    "test:unit": "mocha -r ts-node/register 'src/**/*.test.ts'",
+    "test:integration": "mocha -r ts-node/register 'tests/integration/**/*.ts' --timeout 30000",
     "lint": "echo \"(eslint optional)\"",
+    "generate-wallet": "node scripts/generate-wallet.js",
     "resolve:whirlpool": "ts-node src/scripts/resolve-whirlpool-pool.ts",
     "validate:raydium": "ts-node src/scripts/validate-raydium-pool.ts",
-    "serve:pnl": "node -e \"require('http').createServer((req,res)=>{const fs=require('fs');const p='./data/pnl.log.jsonl';const d=fs.existsSync(p)?fs.readFileSync(p,'utf-8').split('\\n').filter(Boolean).map(JSON.parse):[];res.setHeader('Content-Type','application/json');res.end(JSON.stringify(d));}).listen(9400,()=>console.log('PnL feed on :9400'))\""
+    "serve:pnl": "node -e \"require('http').createServer((req,res)=>{const fs=require('fs');const p='./data/pnl.log.jsonl';const d=fs.existsSync(p)?fs.readFileSync(p,'utf-8').split('\\n').filter(Boolean).map(JSON.parse):[];res.setHeader('Content-Type','application/json');res.end(JSON.stringify(d));}).listen(9400,()=>console.log('PnL feed on :9400'))\"",
+    "backtest": "ts-node src/strategies/backtester.ts"
   },
   "dependencies": {
     "@solana/web3.js": "^1.95.0",
