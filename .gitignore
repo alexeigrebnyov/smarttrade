@@ -1,0 +1,32 @@
+```
+# Dependencies
+node_modules/
+target/
+.cargo/
+
+# Build artifacts
+dist/
+build/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Rust
+Cargo.lock
+```
