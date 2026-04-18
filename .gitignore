@@ -1,48 +1,5 @@
-```
-# Dependencies
-node_modules/
+(docs/FINAL_STATUS.md is a documentation file, which is a source file, so no need to ignore)
 
-# Environment variables
-.env
-.env.local
-.env.*
+# Source files like .md should not be ignored
 
-# Build outputs
-dist/
-build/
-target/
-
-# Python artifacts
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.pyc.*
-*.pyo.*
-*.pyd.*
-
-# Logs
-*.log
-
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-*.tmp
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Testing
-.nyc_output/
-.mypy_cache/
-.pytest_cache/
-.jest/
-```
+(empty)
