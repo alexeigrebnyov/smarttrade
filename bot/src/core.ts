@@ -1,9 +1,9 @@
 import * as anchor from '@coral-xyz/anchor';
 import { AnchorProvider, Program, Wallet } from '@coral-xyz/anchor';
-import { Connection, Keypair, PublicKey, Transaction } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey, Transaction, VersionedTransaction, TransactionInstruction } from '@solana/web3.js';
 import idl from '../idl/arb_bot.json';
 import BN from 'bn.js';
-import { SwapRoute, Opportunity } from './utils/types';
+import { SwapRoute, Opportunity, RouteStep } from './utils/types';
 import { DlmmStrategy } from './strategies/dlmm';
 import { Router } from './routers/router';
 import { Monitoring } from './monitoring/metrics';
@@ -57,20 +57,30 @@ export class TradingBot {
     this.breaker.ensureCanTrade();
     const tx = await this.prepareTransaction(route, amount);
     const sig = await this.program.provider.sendAndConfirm(tx);
-    this.monitor.reportTrade(sig, 0);
+    this.monitor.reportTrade(sig, route.expectedProfit || 0);
     return sig;
   }
 
   private async prepareTransaction(route: SwapRoute, amount: number): Promise<Transaction> {
     const tx = new Transaction();
+    
     for (const step of route.steps) {
+      // Build instruction for execute_swap with dex_type parameter
       const ix = await this.program.methods
-        .executeSwap(new BN(amount), new BN(this.computeMinOut(amount, step.feeBps, TradingBot.SLIPPAGE_BPS)), step.decimals)
+        .executeSwap(
+          new BN(amount), 
+          new BN(this.computeMinOut(amount, step.feeBps, TradingBot.SLIPPAGE_BPS)), 
+          step.decimals,
+          step.dexType || 0 // 0 = Raydium, 1 = Whirlpool
+        )
         .accounts({
           userTokenAccount: step.userAccount,
           poolTokenAccount: step.poolAccount,
           tokenMint: step.mint,
           dexProgram: step.dexProgramId,
+          ammPool: step.poolAccount, // Pass pool as amm_pool
+          ammAuthority: step.ammAuthority || step.poolAccount, // Use provided or fallback
+          tokenProgram: new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'), // SPL Token program
           signer: this.wallet.publicKey
         })
         .instruction();
@@ -81,11 +91,11 @@ export class TradingBot {
     const last = route.steps[route.steps.length - 1];
     // read balance BEFORE tx for that token account
     const before = await this.program.provider.connection.getTokenAccountBalance(last.userAccount as PK);
-    const beforeAmt = before && before.value ? Number(before.value.amount) : 0;
-    const minProfit = 1; // set minimal positive delta (tune per strategy)
+    const beforeAmt = before && before.value ? BigInt(before.value.amount) : 0n;
+    const minProfit = 1n; // set minimal positive delta (tune per strategy)
 
-    const assertIx = await (this.program.methods as any)
-      .assertProfit(new BN(beforeAmt), new BN(minProfit), last.decimals)
+    const assertIx = await this.program.methods
+      .assertProfit(new BN(beforeAmt.toString()), new BN(minProfit.toString()), last.decimals)
       .accounts({
         targetProgram: last.dexProgramId,
         userProfitToken: last.userAccount,
@@ -95,5 +105,23 @@ export class TradingBot {
     tx.add(assertIx);
 
     return tx;
+  }
+  
+  /// Helper to get or create ATA for a mint
+  async getOrCreateATA(mint: PublicKey): Promise<PublicKey> {
+    const { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } = require('@solana/spl-token');
+    const { getOrCreateAssociatedTokenAccount } = require('@solana/spl-token');
+    
+    try {
+      const ata = await getOrCreateAssociatedTokenAccount(
+        this.connection,
+        this.wallet,
+        mint,
+        this.wallet.publicKey
+      );
+      return ata.address;
+    } catch (err) {
+      throw new Error(`Failed to get/create ATA for mint ${mint.toBase58()}: ${err}`);
+    }
   }
 }
