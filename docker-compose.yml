@@ -1,0 +1,70 @@
+version: '3.8'
+
+# Docker Compose для сборки смарт-контракта и запуска бота
+# Использование: docker-compose -f docker-compose.build.yml up --build
+
+services:
+  # Сервис для сборки контракта
+  contract-builder:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: arb-contract-builder
+    volumes:
+      # Монтируем артефакты обратно в хост
+      - ../contracts/target:/app/target
+    command: >
+      bash -c "
+        echo '=== Starting Contract Build ===' &&
+        ls -la /app/target || echo 'Target directory will be created' &&
+        echo '=== Build Complete ==='
+      "
+
+  # Сервис для генерации IDL (после сборки)
+  idl-generator:
+    image: ghcr.io/coral-xyz/anchor:v0.30.1
+    container_name: arb-idl-generator
+    working_dir: /build
+    volumes:
+      - ../contracts:/build
+      - ../bot/idl:/output/idl
+    depends_on:
+      - contract-builder
+    command: >
+      bash -c "
+        echo 'Waiting for build artifacts...' &&
+        sleep 5 &&
+        if [ -f target/deploy/arb_bot.so ]; then
+          echo 'Generating IDL...' &&
+          anchor idl arb_bot --outfile /output/idl/arb_bot.json &&
+          echo 'IDL generated successfully!' &&
+          ls -la /output/idl/
+        else
+          echo 'Error: Contract .so file not found. Make sure contract-builder completed successfully.'
+          exit 1
+        fi
+      "
+
+  # Сервис для деплоя на devnet (требует переменных окружения)
+  deployer:
+    image: ghcr.io/coral-xyz/anchor:v0.30.1
+    container_name: arb-deployer
+    working_dir: /build
+    volumes:
+      - ../contracts:/build
+      - ~/.config/solana:/root/.config/solana:ro
+    environment:
+      - SOLANA_CLUSTER=devnet
+      - RPC_URL=${RPC_URL:-https://api.devnet.solana.com}
+    depends_on:
+      - idl-generator
+    command: >
+      bash -c "
+        echo 'Configuring Solana CLI...' &&
+        solana config set --url $$RPC_URL &&
+        echo 'Deploying contract...' &&
+        anchor deploy --provider.cluster $$RPC_URL &&
+        echo 'Deployment complete!'
+      "
+    profiles:
+      - deploy
